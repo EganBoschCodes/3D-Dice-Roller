@@ -1,10 +1,14 @@
 # DND Dice Roller
 
-Localhost-only website: a DnD dice roller where results come from a rigid-body
-physics simulation, not a PRNG. Dice are thrown into a 3D tray, tumble until
-they sleep, then the app reads each die's upward face and sums the results.
-`Math.random` only seeds throw conditions (position jitter, spin, velocity) —
-the chaotic tumble is the randomizer.
+A DnD dice roller where results come from a rigid-body physics simulation, not
+a PRNG. Dice are thrown into a 3D tray, tumble until they sleep, then the app
+reads each die's upward face and sums the results. `Math.random` only seeds
+throw conditions (position jitter, spin, velocity) — the chaotic tumble is the
+randomizer.
+
+Runs fully client-side (physics is browser-side), so it ships as a static
+site. Deployed to GitHub Pages at
+https://eganboschcodes.github.io/3D-Dice-Roller/ — see Deployment below.
 
 ## Stack
 
@@ -20,6 +24,17 @@ App was scaffolded by hand (create-next-app rejects the space in the dir name).
 
 - `bun run dev` — dev server on localhost:3000
 - `bun run typecheck` — tsc --noEmit
+- `bun run build` — static export to `out/` (Next `output: 'export'`)
+
+## Deployment
+
+- GitHub Pages, auto-deployed by `.github/workflows/deploy.yml` on push to
+  `main` (Bun build → `out/` → Pages). Repo Settings → Pages → Source must be
+  "GitHub Actions".
+- Served from the `/3D-Dice-Roller/` subpath, so `next.config.ts` sets
+  `basePath`/`assetPrefix` — but only when `GITHUB_PAGES=true` (set in CI), so
+  local dev/build stay at root. `public/.nojekyll` keeps `_next/` from being
+  stripped. `out/` is gitignored (CI regenerates it).
 
 ## Layout
 
