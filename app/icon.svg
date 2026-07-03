@@ -1,0 +1,45 @@
+<svg width="64" height="64" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#1b2536"/>
+      <stop offset="100%" stop-color="#0b0e14"/>
+    </radialGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6ea0ff"/>
+      <stop offset="100%" stop-color="#3d7eff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- tab background -->
+  <rect x="0" y="0" width="100" height="100" rx="22" fill="url(#bg)"/>
+
+  <!-- d20 facets: lighter at top, darker toward the bottom for 3D depth -->
+  <g stroke="#cfe0ff" stroke-width="1.1" stroke-linejoin="round" stroke-opacity="0.35">
+    <!-- top-left quad -->
+    <polygon points="50,28 50,7 13,28 29,64" fill="#4f8bff"/>
+    <!-- top-right quad -->
+    <polygon points="50,28 71,64 87,28 50,7" fill="#4483f0"/>
+    <!-- left triangle -->
+    <polygon points="29,64 13,28 13,72" fill="#356fe0"/>
+    <!-- right triangle -->
+    <polygon points="71,64 87,72 87,28" fill="#2f63cc"/>
+    <!-- bottom-left triangle -->
+    <polygon points="29,64 13,72 50,93" fill="#2a5abd"/>
+    <!-- bottom-right triangle -->
+    <polygon points="71,64 50,93 87,72" fill="#2551a8"/>
+    <!-- bottom-center triangle -->
+    <polygon points="29,64 50,93 71,64" fill="#2b5cc0"/>
+    <!-- central face (bears the 20) -->
+    <polygon points="50,28 29,64 71,64" fill="url(#face)"/>
+  </g>
+
+  <!-- gold rim on the die silhouette -->
+  <polygon points="50,7 87,28 87,72 50,93 13,72 13,28"
+           fill="none" stroke="#f0b64b" stroke-width="2.4"
+           stroke-linejoin="round" stroke-opacity="0.9"/>
+
+  <!-- the number -->
+  <text x="50" y="55" text-anchor="middle"
+        font-family="Segoe UI, system-ui, sans-serif" font-size="22"
+        font-weight="700" fill="#ffffff">20</text>
+</svg>
