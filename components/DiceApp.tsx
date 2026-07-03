@@ -2,6 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { ControlBar } from "./ControlBar";
+import { FavoritesPanel } from "./FavoritesPanel";
+import { QuickActions } from "./QuickActions";
 import { ResultsPanel } from "./ResultsPanel";
 
 // Rapier + three must never render on the server; ssr:false is only allowed
@@ -15,6 +17,8 @@ export default function DiceApp() {
   return (
     <main>
       <Scene />
+      <QuickActions />
+      <FavoritesPanel />
       <ControlBar />
       <ResultsPanel />
     </main>
