@@ -1,12 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { BlackFlash } from "./BlackFlash";
 import { ControlBar } from "./ControlBar";
 import { FavoritesPanel } from "./FavoritesPanel";
 import { QuickActions } from "./QuickActions";
 import { ResultsPanel } from "./ResultsPanel";
 import { RollTotalPopup } from "./RollTotalPopup";
-import { SuspenseSlider } from "./SuspenseSlider";
+import { Settings } from "./Settings";
 
 // Rapier + three must never render on the server; ssr:false is only allowed
 // inside a Client Component in Next 15, hence this wrapper.
@@ -20,11 +21,12 @@ export default function DiceApp() {
     <main>
       <Scene />
       <QuickActions />
-      <SuspenseSlider />
+      <Settings />
       <FavoritesPanel />
       <ControlBar />
       <ResultsPanel />
       <RollTotalPopup />
+      <BlackFlash />
     </main>
   );
 }

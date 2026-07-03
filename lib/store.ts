@@ -15,6 +15,8 @@ export interface DieResult {
   label: string;
 }
 
+export type BgMediaType = "image" | "video";
+
 interface DiceState {
   counts: Record<DieType, number>;
   phase: Phase;
@@ -22,6 +24,14 @@ interface DiceState {
   /** 0..1 dial for bounciness + how long before a die is judged settled. */
   suspense: number;
   setSuspense: (v: number) => void;
+  /** Play the Jujutsu Kaisen "black flash" when a d20 roll's result is a nat 20. */
+  blackFlash: boolean;
+  setBlackFlash: (v: boolean) => void;
+  /** Data URL for user-uploaded tray-floor media (null = default felt). Persisted. */
+  bgMediaUrl: string | null;
+  bgMediaType: BgMediaType | null;
+  setBackgroundMedia: (url: string, type: BgMediaType) => void;
+  clearBackgroundMedia: () => void;
   /** How the current roll's total is derived (set at roll time). */
   mode: RollMode;
   /** Dice currently in the tray (set at roll time). */
@@ -66,6 +76,23 @@ export function rollTotal(
   return spec.reduce((sum, d) => sum + (results[d.id]?.value ?? 0), 0);
 }
 
+/**
+ * Whether a settled roll should trigger the black flash: only the d20-based
+ * modes count, and only when the *reported result* is a nat 20 — advantage's
+ * kept (higher) die is 20, disadvantage's kept (lower) die is 20 (i.e. both
+ * are 20), or a flat single-d20 roll shows 20.
+ */
+export function isBlackFlashRoll(
+  mode: RollMode,
+  spec: DieSpec[],
+  results: Record<string, DieResult>
+): boolean {
+  const isFlatD20 =
+    mode === "normal" && spec.length === 1 && spec[0]?.type === "d20";
+  if (mode !== "advantage" && mode !== "disadvantage" && !isFlatD20) return false;
+  return rollTotal(mode, spec, results) === 20;
+}
+
 export const totalCount = (counts: Record<DieType, number>) =>
   DIE_TYPES.reduce((sum, t) => sum + counts[t], 0);
 
@@ -90,6 +117,12 @@ export const useDiceStore = create<DiceState>((set, get) => ({
   rollId: 0,
   suspense: 0.5,
   setSuspense: (v) => set({ suspense: Math.max(0, Math.min(1, v)) }),
+  blackFlash: false,
+  setBlackFlash: (v) => set({ blackFlash: v }),
+  bgMediaUrl: null,
+  bgMediaType: null,
+  setBackgroundMedia: (url, type) => set({ bgMediaUrl: url, bgMediaType: type }),
+  clearBackgroundMedia: () => set({ bgMediaUrl: null, bgMediaType: null }),
   mode: "normal",
   spec: [],
   results: {},
@@ -115,7 +148,8 @@ export const useDiceStore = create<DiceState>((set, get) => ({
 
   quickRoll: (types, mode = "normal") => startRoll(get, set, types, mode),
 
-  clear: () => set({ spec: [], results: {}, phase: "idle", mode: "normal" }),
+  clear: () =>
+    set({ counts: emptyCounts(), spec: [], results: {}, phase: "idle", mode: "normal" }),
 
   reportResult: (id, result) =>
     set((s) => {

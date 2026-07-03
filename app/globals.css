@@ -334,30 +334,181 @@ body {
   color: #8a94a6;
 }
 
-/* ---- top-right suspense slider ---- */
+/* ---- top-right settings ---- */
 
-.suspense-panel {
+.settings-gear {
   position: fixed;
   top: 16px;
   right: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 14px;
-  background: rgba(17, 22, 31, 0.88);
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
   border: 1px solid #2a3546;
   border-radius: 12px;
+  background: rgba(17, 22, 31, 0.88);
   backdrop-filter: blur(6px);
-  width: 180px;
-  z-index: 10;
+  color: #aab4c4;
+  cursor: pointer;
+  z-index: 30;
 }
 
-.suspense-title {
+.settings-gear:hover {
+  color: #e8eaed;
+  background: rgba(30, 40, 54, 0.92);
+}
+
+.settings-gear svg {
+  transition: transform 0.4s ease;
+}
+
+.settings-gear:hover svg {
+  transform: rotate(60deg);
+}
+
+.settings-panel {
+  position: fixed;
+  top: 66px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(17, 22, 31, 0.94);
+  border: 1px solid #2a3546;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  width: 250px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 30;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-title {
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #8a94a6;
+}
+
+.settings-close {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #aab4c4;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.settings-close:hover {
+  background: #1b2432;
+  color: #fff;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #c3cbd8;
+}
+
+.settings-bg-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.settings-btn {
+  flex: 1;
+  padding: 7px 10px;
+  border: 1px solid #3a4a61;
+  border-radius: 8px;
+  background: #1b2432;
+  color: #e8eaed;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.settings-btn:hover {
+  background: #263349;
+}
+
+.settings-btn-ghost {
+  flex: 0 0 auto;
+  color: #d68a8a;
+  border-color: #7a2f2f;
+  background: transparent;
+}
+
+.settings-btn-ghost:hover {
+  background: #2a1717;
+}
+
+.settings-bg-preview {
+  border: 1px solid #2a3546;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #10151e;
+  aspect-ratio: 4 / 3;
+}
+
+.settings-bg-preview img,
+.settings-bg-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.settings-hint {
+  display: block;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: #5a6474;
+  font-weight: 400;
+}
+
+.settings-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #c3cbd8;
+}
+
+.settings-check input {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: #d43a3a;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.settings-check > span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .suspense-range {
@@ -520,4 +671,208 @@ body {
 .favorite-delete:hover {
   background: #7a2f2f;
   color: #fff;
+}
+
+/* ---- black flash (JJK) ---- */
+
+.black-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  overflow: hidden;
+  animation: bf-shake 520ms cubic-bezier(0.36, 0.07, 0.19, 0.97) 60ms;
+}
+
+/* the sudden black slam that opens the effect */
+.black-flash .bf-black {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.55) 0%, #000 70%);
+  animation: bf-black 1600ms ease-out forwards;
+}
+
+/* crimson core flash */
+.black-flash .bf-burst {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 60, 60, 0.95) 0%,
+    rgba(190, 0, 0, 0.6) 22%,
+    rgba(90, 0, 0, 0) 55%
+  );
+  mix-blend-mode: screen;
+  animation: bf-burst 1600ms ease-out forwards;
+}
+
+/* expanding shockwave rings */
+.black-flash .bf-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40vmax;
+  height: 40vmax;
+  margin: -20vmax 0 0 -20vmax;
+  border: 3px solid rgba(255, 40, 40, 0.9);
+  border-radius: 50%;
+  box-shadow: 0 0 40px rgba(255, 30, 30, 0.7), inset 0 0 40px rgba(255, 30, 30, 0.5);
+  animation: bf-ring 900ms cubic-bezier(0.15, 0.7, 0.3, 1) forwards;
+}
+
+.black-flash .bf-ring-2 {
+  animation-delay: 140ms;
+  border-color: rgba(120, 0, 0, 0.8);
+}
+
+/* red lightning cracks radiating from center */
+.black-flash .bf-bolts {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #ff2b2b;
+  stroke-width: 0.7;
+  filter: drop-shadow(0 0 6px rgba(255, 20, 20, 0.9));
+  animation: bf-bolts 1600ms ease-out forwards;
+}
+
+.black-flash .bf-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  animation: bf-text 1600ms cubic-bezier(0.2, 0.9, 0.3, 1.4) forwards;
+}
+
+.black-flash .bf-kanji {
+  font-size: 22vmin;
+  font-weight: 900;
+  line-height: 0.9;
+  color: #ff2f2f;
+  text-shadow: 0 0 24px rgba(255, 0, 0, 0.9), 0 0 6px #000, 4px 4px 0 #000;
+  letter-spacing: 0.04em;
+}
+
+.black-flash .bf-label {
+  font-size: 3.4vmin;
+  font-weight: 800;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: #f5f5f5;
+  text-shadow: 0 0 14px rgba(255, 0, 0, 0.85), 0 2px 4px #000;
+}
+
+@keyframes bf-black {
+  0% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes bf-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  8% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  40% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+@keyframes bf-ring {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+@keyframes bf-bolts {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-4deg);
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  55% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes bf-text {
+  0% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes bf-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-10px, 6px);
+  }
+  25% {
+    transform: translate(9px, -8px);
+  }
+  40% {
+    transform: translate(-8px, -6px);
+  }
+  55% {
+    transform: translate(7px, 7px);
+  }
+  70% {
+    transform: translate(-5px, 4px);
+  }
+  85% {
+    transform: translate(4px, -3px);
+  }
 }
