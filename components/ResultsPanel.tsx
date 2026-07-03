@@ -1,7 +1,7 @@
 "use client";
 
 import { DIE_TYPES } from "@/lib/dice/types";
-import { useDiceStore } from "@/lib/store";
+import { rollTotal, useDiceStore } from "@/lib/store";
 
 export function ResultsPanel() {
   const phase = useDiceStore((s) => s.phase);
@@ -23,10 +23,35 @@ export function ResultsPanel() {
     );
   }
 
+  // Percentile: d% is the tens (00–90), d10 is the ones (0–9); all-zeros = 100.
+  // (The dice store the standalone conventions — d% 00=100, d10 0=10 — so we
+  // read the digits back out rather than summing the stored values.)
+  if (mode === "percentile") {
+    const tensDie = spec.find((d) => d.type === "d%");
+    const onesDie = spec.find((d) => d.type === "d10");
+    const total = rollTotal(mode, spec, results);
+    return (
+      <div className="results-panel">
+        <div className="results-mode">Percentile</div>
+        <div className="results-group">
+          <span className="results-type">tens</span>
+          <span className="results-values">{tensDie ? results[tensDie.id]?.label : "–"}</span>
+        </div>
+        <div className="results-group">
+          <span className="results-type">ones</span>
+          <span className="results-values">{onesDie ? results[onesDie.id]?.label : "–"}</span>
+        </div>
+        <div className="results-total">
+          Total <strong>{total}</strong>
+        </div>
+      </div>
+    );
+  }
+
   // Advantage / disadvantage: two d20s, keep the higher / lower — not a sum.
   if (mode === "advantage" || mode === "disadvantage") {
     const values = spec.map((d) => results[d.id]?.value ?? 0);
-    const kept = mode === "advantage" ? Math.max(...values) : Math.min(...values);
+    const kept = rollTotal(mode, spec, results);
     let keptShown = false; // highlight only one die on a tie
     return (
       <div className="results-panel">
@@ -56,7 +81,7 @@ export function ResultsPanel() {
     values: spec.filter((d) => d.type === t).map((d) => results[d.id]?.value ?? 0),
   })).filter((g) => g.values.length > 0);
 
-  const total = groups.reduce((sum, g) => sum + g.values.reduce((a, b) => a + b, 0), 0);
+  const total = rollTotal(mode, spec, results);
 
   return (
     <div className="results-panel">

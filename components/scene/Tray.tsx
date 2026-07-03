@@ -1,6 +1,8 @@
 "use client";
 
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
+import { suspenseToPhysics } from "@/lib/dice/suspense";
+import { useDiceStore } from "@/lib/store";
 
 // half-extents of the tray floor
 export const TRAY_W = 8;
@@ -9,6 +11,9 @@ export const TRAY_D = 6;
 const RIM_H = 0.9;
 
 export function Tray() {
+  // Floor restitution tracks the suspense dial; rapier applies it to the live
+  // fixed collider, so the tray gets bouncier/deader as the slider moves.
+  const floorRestitution = useDiceStore((s) => suspenseToPhysics(s.suspense).floorRestitution);
   return (
     <>
       <RigidBody type="fixed" colliders={false}>
@@ -17,7 +22,7 @@ export function Tray() {
           args={[TRAY_W + 1, 0.5, TRAY_D + 1]}
           position={[0, -0.5, 0]}
           friction={0.6}
-          restitution={0.45}
+          restitution={floorRestitution}
         />
         {/* tall invisible walls so thrown dice can't hop out */}
         <CuboidCollider args={[0.5, 5, TRAY_D + 1]} position={[TRAY_W + 0.5, 5, 0]} />

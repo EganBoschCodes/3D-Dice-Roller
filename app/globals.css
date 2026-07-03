@@ -219,6 +219,59 @@ body {
   text-decoration: line-through;
 }
 
+/* ---- centered roll-total popup ---- */
+
+.roll-total-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.roll-total-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 28px 56px;
+  background: rgba(17, 22, 31, 0.9);
+  border: 1px solid #2a3546;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+  animation: roll-total-in 260ms cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+.roll-total-caption {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #8a94a6;
+}
+
+.roll-total-value {
+  font-size: 8rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: #f0f3f8;
+  text-shadow: 0 4px 24px rgba(61, 126, 255, 0.35);
+}
+
+@keyframes roll-total-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* ---- top quick-actions bar ---- */
 
 .quick-actions {
@@ -281,6 +334,45 @@ body {
   color: #8a94a6;
 }
 
+/* ---- top-right suspense slider ---- */
+
+.suspense-panel {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: rgba(17, 22, 31, 0.88);
+  border: 1px solid #2a3546;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  width: 180px;
+  z-index: 10;
+}
+
+.suspense-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8a94a6;
+}
+
+.suspense-range {
+  width: 100%;
+  accent-color: #f0b64b;
+  cursor: pointer;
+}
+
+.suspense-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: #5a6474;
+}
+
 /* ---- left favorites panel ---- */
 
 .favorites-panel {
@@ -296,7 +388,7 @@ body {
   border: 1px solid #2a3546;
   border-radius: 12px;
   backdrop-filter: blur(6px);
-  width: 210px;
+  width: 300px;
   max-height: 70vh;
   z-index: 10;
 }
@@ -364,19 +456,17 @@ body {
 }
 
 .favorite-row {
-  display: flex;
-  align-items: stretch;
-  gap: 6px;
+  position: relative;
 }
 
 .favorite-roll {
-  flex: 1;
+  width: 100%;
   min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
-  padding: 7px 10px;
+  padding: 7px 34px 7px 10px;
   border: 1px solid #3a4a61;
   border-radius: 8px;
   background: #1b2432;
@@ -410,13 +500,19 @@ body {
 }
 
 .favorite-delete {
-  width: 28px;
-  flex-shrink: 0;
-  border: 1px solid #3a4a61;
-  border-radius: 8px;
-  background: transparent;
-  color: #8a94a6;
-  font-size: 1.1rem;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: rgba(11, 14, 20, 0.55);
+  color: #aab4c4;
+  font-size: 0.95rem;
   line-height: 1;
   cursor: pointer;
 }
@@ -424,5 +520,4 @@ body {
 .favorite-delete:hover {
   background: #7a2f2f;
   color: #fff;
-  border-color: #7a2f2f;
 }

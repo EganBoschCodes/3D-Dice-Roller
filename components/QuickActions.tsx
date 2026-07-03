@@ -15,7 +15,7 @@ const ACTIONS: QuickAction[] = [
   { key: "dis", label: "Disadvantage", sub: "2d20 · keep low", types: ["d20", "d20"], mode: "disadvantage" },
   { key: "d20", label: "Roll 1d20", sub: "flat", types: ["d20"], mode: "normal" },
   { key: "adv", label: "Advantage", sub: "2d20 · keep high", types: ["d20", "d20"], mode: "advantage" },
-  { key: "d100", label: "Percentile", sub: "d100", types: ["d%"], mode: "normal" },
+  { key: "d100", label: "Percentile", sub: "d% + d10", types: ["d%", "d10"], mode: "percentile" },
   { key: "fireball", label: "Fireball", sub: "8d6", types: ["d6", "d6", "d6", "d6", "d6", "d6", "d6", "d6"], mode: "normal" },
 ];
 

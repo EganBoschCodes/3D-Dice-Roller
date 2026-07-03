@@ -4,7 +4,7 @@ import { DIE_TYPES, type DieSpec, type DieType } from "./dice/types";
 export type Phase = "idle" | "rolling" | "settled";
 
 /** How the current roll's total is derived from the settled dice. */
-export type RollMode = "normal" | "advantage" | "disadvantage";
+export type RollMode = "normal" | "advantage" | "disadvantage" | "percentile";
 
 export const MAX_PER_TYPE = 10;
 export const MAX_TOTAL = 20;
@@ -19,6 +19,9 @@ interface DiceState {
   counts: Record<DieType, number>;
   phase: Phase;
   rollId: number;
+  /** 0..1 dial for bounciness + how long before a die is judged settled. */
+  suspense: number;
+  setSuspense: (v: number) => void;
   /** How the current roll's total is derived (set at roll time). */
   mode: RollMode;
   /** Dice currently in the tray (set at roll time). */
@@ -35,6 +38,33 @@ interface DiceState {
 
 const emptyCounts = () =>
   Object.fromEntries(DIE_TYPES.map((t) => [t, 0])) as Record<DieType, number>;
+
+/**
+ * The headline number for a settled roll, derived the way each mode reports it:
+ * percentile reads the tens/ones digits back out (all-zeros = 100), adv/dis keeps
+ * the higher/lower die, normal sums every die. Single source of truth for both
+ * the results panel and the roll-total popup.
+ */
+export function rollTotal(
+  mode: RollMode,
+  spec: DieSpec[],
+  results: Record<string, DieResult>
+): number {
+  if (mode === "percentile") {
+    const tensDie = spec.find((d) => d.type === "d%");
+    const onesDie = spec.find((d) => d.type === "d10");
+    const tensVal = tensDie ? results[tensDie.id]?.value ?? 0 : 0; // 100 or 10..90
+    const onesVal = onesDie ? results[onesDie.id]?.value ?? 0 : 0; // 10 or 1..9
+    const tens = tensVal === 100 ? 0 : tensVal;
+    const ones = onesVal === 10 ? 0 : onesVal;
+    return tens + ones === 0 ? 100 : tens + ones;
+  }
+  if (mode === "advantage" || mode === "disadvantage") {
+    const values = spec.map((d) => results[d.id]?.value ?? 0);
+    return mode === "advantage" ? Math.max(...values) : Math.min(...values);
+  }
+  return spec.reduce((sum, d) => sum + (results[d.id]?.value ?? 0), 0);
+}
 
 export const totalCount = (counts: Record<DieType, number>) =>
   DIE_TYPES.reduce((sum, t) => sum + counts[t], 0);
@@ -58,6 +88,8 @@ export const useDiceStore = create<DiceState>((set, get) => ({
   counts: emptyCounts(),
   phase: "idle",
   rollId: 0,
+  suspense: 0.5,
+  setSuspense: (v) => set({ suspense: Math.max(0, Math.min(1, v)) }),
   mode: "normal",
   spec: [],
   results: {},
