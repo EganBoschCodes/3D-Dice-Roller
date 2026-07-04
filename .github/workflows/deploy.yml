@@ -10,10 +10,13 @@ permissions:
   pages: write
   id-token: write
 
-# Allow one concurrent deployment; cancel in-progress runs on new pushes.
+# Allow one concurrent deployment. Do NOT cancel an in-progress run: cancelling
+# a Pages deployment mid-flight is a known footgun that leaves Pages in a state
+# where the *next* deploy fails with "Deployment failed, try again later".
+# (This matches GitHub's official Pages starter workflow.)
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -36,7 +39,18 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy1.outputs.page_url || steps.deploy2.outputs.page_url }}
     steps:
-      - id: deployment
+      # The Pages backend intermittently returns "Deployment failed, try again
+      # later" — a transient server-side error, not a build problem. A manual
+      # re-run has always fixed it, so we just do that automatically: try once,
+      # and if it fails, wait a moment and try again before failing the job.
+      - id: deploy1
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - name: Wait before retrying deploy
+        if: steps.deploy1.outcome == 'failure'
+        run: sleep 20
+      - id: deploy2
+        if: steps.deploy1.outcome == 'failure'
         uses: actions/deploy-pages@v4

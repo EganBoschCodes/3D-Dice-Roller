@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { makeThrowParams } from "@/lib/dice/throwParams";
+import { makeThrows } from "@/lib/dice/throwParams";
 import { useDiceStore } from "@/lib/store";
 import { Die } from "./Die";
 
@@ -11,7 +11,7 @@ export function DiceManager() {
 
   // one throw per die, regenerated per roll
   const throws = useMemo(
-    () => spec.map((_, i) => makeThrowParams(i)),
+    () => makeThrows(spec.length),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [rollId, spec.length]
   );
