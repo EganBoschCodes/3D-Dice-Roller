@@ -876,3 +876,523 @@ body {
     transform: translate(4px, -3px);
   }
 }
+
+/* ==========================================================================
+   MOBILE LAYOUT
+   The desktop panels above stay as-is; below the breakpoint we hide them and
+   show a bottom dock + slide-in sheet instead. "Mobile" = a narrow screen OR a
+   short one, so a phone held sideways (short height, wide) counts even though
+   it's not narrow — landscape is the primary phone orientation for this app.
+   ========================================================================== */
+
+.mobile-ui {
+  display: none;
+}
+
+@media (max-width: 820px), (max-height: 540px) {
+  /* swap desktop panels for the mobile surface */
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-ui {
+    display: contents;
+  }
+
+  /* --- shared panels: shrink so they don't crowd a small screen --- */
+  .results-panel {
+    top: max(8px, env(safe-area-inset-top));
+    left: max(8px, env(safe-area-inset-left));
+    padding: 8px 12px;
+    min-width: 0;
+    max-width: 52vw;
+    font-size: 0.85rem;
+  }
+  .results-status {
+    font-size: 0.82rem;
+  }
+  .results-total {
+    margin-top: 5px;
+    padding-top: 5px;
+    font-size: 0.95rem;
+  }
+  .results-total strong {
+    font-size: 1.15rem;
+  }
+  .adv-kept {
+    font-size: 1.3rem;
+  }
+
+  .settings-gear {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(8px, env(safe-area-inset-right));
+    width: 40px;
+    height: 40px;
+    z-index: 30;
+  }
+  .settings-panel {
+    top: max(58px, calc(env(safe-area-inset-top) + 50px));
+    right: max(8px, env(safe-area-inset-right));
+    width: min(280px, 88vw);
+    max-height: min(80vh, 460px);
+    z-index: 45;
+  }
+
+  /* the big total popup is oversized for a phone (esp. landscape height) */
+  .roll-total-popup {
+    padding: 18px 40px;
+  }
+  .roll-total-value {
+    font-size: 4.5rem;
+  }
+  .roll-total-overlay {
+    z-index: 60;
+  }
+}
+
+/* --- bottom dock: dice-builder toggle · scrollable quick actions · Roll --- */
+
+.m-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  padding: 8px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom))
+    max(10px, env(safe-area-inset-left));
+  background: linear-gradient(to top, rgba(11, 14, 20, 0.95) 55%, rgba(11, 14, 20, 0));
+  pointer-events: none; /* let taps fall through the transparent gradient to the tray */
+}
+
+.m-dock > * {
+  pointer-events: auto;
+}
+
+.m-dice-toggle {
+  position: relative;
+  flex: 0 0 auto;
+  width: 52px;
+  border: 1px solid #3a4a61;
+  border-radius: 12px;
+  background: rgba(27, 36, 50, 0.95);
+  color: #e8eaed;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.m-dice-toggle-open {
+  background: #263349;
+  border-color: #3d7eff;
+}
+
+.m-dice-toggle-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #3d7eff;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-quick-row {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+}
+
+.m-quick-row::-webkit-scrollbar {
+  display: none;
+}
+
+.m-quick {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 74px;
+  padding: 6px 12px;
+  border: 1px solid #3a4a61;
+  border-radius: 12px;
+  background: rgba(27, 36, 50, 0.95);
+  color: #e8eaed;
+  cursor: pointer;
+}
+
+.m-quick:disabled {
+  opacity: 0.4;
+}
+
+.m-quick-adv {
+  border-color: #2f6b3a;
+}
+.m-quick-dis {
+  border-color: #7a2f2f;
+}
+.m-quick-fireball {
+  border-color: #b5561e;
+}
+
+.m-quick-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.m-quick-sub {
+  font-size: 0.62rem;
+  color: #8a94a6;
+  white-space: nowrap;
+}
+
+.m-roll {
+  flex: 0 0 auto;
+  min-width: 74px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 12px;
+  background: #3d7eff;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.m-roll:disabled {
+  opacity: 0.45;
+}
+
+/* --- slide-in sheet: bottom in portrait, right edge in landscape --- */
+
+.m-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 38;
+  background: rgba(0, 0, 0, 0.5);
+  animation: m-fade-in 0.2s ease;
+}
+
+@keyframes m-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.m-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  max-height: 82vh;
+  padding: 6px 14px calc(16px + env(safe-area-inset-bottom));
+  background: rgba(15, 20, 29, 0.98);
+  border-top: 1px solid #2a3546;
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.5);
+  transform: translateY(110%);
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  visibility: hidden;
+}
+
+.m-sheet-open {
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.m-sheet-grip {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 5px;
+  margin: 8px auto 6px;
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  background: #3a4a61;
+  cursor: pointer;
+}
+
+.m-sheet-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.m-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.m-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.m-section-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8a94a6;
+}
+
+.m-total {
+  font-size: 0.78rem;
+  color: #8a94a6;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-dice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.m-die {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid #2a3546;
+  border-radius: 10px;
+  background: #131a25;
+}
+
+.m-die-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.m-die-ctrls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.m-step {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #3a4a61;
+  border-radius: 9px;
+  background: #1b2432;
+  color: #e8eaed;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.m-step:disabled {
+  opacity: 0.35;
+}
+
+.m-die-count {
+  width: 22px;
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-section-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.m-clear {
+  flex: 0 0 auto;
+  padding: 0 18px;
+  height: 46px;
+  border: 1px solid #3a4a61;
+  border-radius: 11px;
+  background: transparent;
+  color: #aab4c4;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.m-clear:disabled {
+  opacity: 0.35;
+}
+
+.m-roll-lg {
+  flex: 1 1 auto;
+  height: 46px;
+  border: none;
+  border-radius: 11px;
+  background: #3d7eff;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.m-roll-lg:disabled {
+  opacity: 0.45;
+}
+
+.m-fav-save {
+  display: flex;
+  gap: 8px;
+}
+
+.m-fav-input {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #3a4a61;
+  border-radius: 10px;
+  background: #10151e;
+  color: #e8eaed;
+  font-size: 0.9rem;
+}
+
+.m-fav-input::placeholder {
+  color: #5a6474;
+}
+
+.m-fav-savebtn {
+  flex: 0 0 auto;
+  padding: 0 18px;
+  height: 42px;
+  border: none;
+  border-radius: 10px;
+  background: #3d7eff;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.m-fav-savebtn:disabled {
+  opacity: 0.4;
+}
+
+.m-fav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.m-fav-empty {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: #5a6474;
+}
+
+.m-fav-row {
+  position: relative;
+}
+
+.m-fav-roll {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 9px 44px 9px 12px;
+  border: 1px solid #3a4a61;
+  border-radius: 10px;
+  background: #1b2432;
+  color: #e8eaed;
+  text-align: left;
+  cursor: pointer;
+}
+
+.m-fav-roll:disabled {
+  opacity: 0.5;
+}
+
+.m-fav-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.m-fav-sub {
+  font-size: 0.74rem;
+  color: #8a94a6;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-fav-del {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 8px;
+  background: rgba(11, 14, 20, 0.55);
+  color: #aab4c4;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Landscape phone: the sheet comes from the right edge (full height) so it
+   doesn't swallow the short vertical space, and the dock stays compact. */
+@media (max-height: 540px) and (orientation: landscape) {
+  .m-sheet {
+    left: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(380px, 84vw);
+    max-height: none;
+    padding: 12px 16px calc(16px + env(safe-area-inset-bottom)) 16px;
+    border-top: none;
+    border-left: 1px solid #2a3546;
+    border-radius: 18px 0 0 18px;
+    box-shadow: -12px 0 40px rgba(0, 0, 0, 0.5);
+    transform: translateX(110%);
+  }
+  .m-sheet-open {
+    transform: translateX(0);
+  }
+  .m-sheet-grip {
+    width: 5px;
+    height: 40px;
+    margin: 4px 0 6px;
+  }
+  .m-dice-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .m-quick {
+    padding: 5px 12px;
+  }
+}

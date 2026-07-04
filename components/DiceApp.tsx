@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { BlackFlash } from "./BlackFlash";
 import { ControlBar } from "./ControlBar";
 import { FavoritesPanel } from "./FavoritesPanel";
+import { MobileControls } from "./MobileControls";
 import { QuickActions } from "./QuickActions";
 import { ResultsPanel } from "./ResultsPanel";
 import { RollTotalPopup } from "./RollTotalPopup";
@@ -20,10 +21,22 @@ export default function DiceApp() {
   return (
     <main>
       <Scene />
-      <QuickActions />
+
+      {/* Desktop-only panels — hidden below the mobile breakpoint (see globals.css).
+          Kept exactly as-is so the desktop experience is unchanged. */}
+      <div className="desktop-only">
+        <QuickActions />
+        <FavoritesPanel />
+        <ControlBar />
+      </div>
+
+      {/* Mobile-only layout — hidden on desktop. */}
+      <div className="mobile-ui">
+        <MobileControls />
+      </div>
+
+      {/* Shared across both layouts (get mobile CSS tweaks, not separate markup). */}
       <Settings />
-      <FavoritesPanel />
-      <ControlBar />
       <ResultsPanel />
       <RollTotalPopup />
       <BlackFlash />

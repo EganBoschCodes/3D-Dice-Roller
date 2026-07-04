@@ -39,10 +39,20 @@ App was scaffolded by hand (create-next-app rejects the space in the dir name).
 ## Layout
 
 - `app/page.tsx` → `components/DiceApp.tsx` ("use client", dynamic-imports the
-  scene with `ssr: false` — required; Rapier/three must never render on server)
+  scene with `ssr: false` — required; Rapier/three must never render on server).
+  Desktop panels sit in a `.desktop-only` wrapper; `MobileControls` in a
+  `.mobile-ui` wrapper. Which shows is pure CSS in globals.css (both trees
+  mount, no JS/hydration branch): mobile = `@media (max-width: 820px),
+  (max-height: 540px)` — the short-height clause catches a landscape phone,
+  which is the primary mobile orientation. Settings/ResultsPanel/RollTotalPopup
+  are shared (mobile just restyles them). The sheet drops from the bottom in
+  portrait, slides from the right in landscape
 - `components/ControlBar.tsx` — right-edge vertical bar, +/- per die type
   (max 10/type, 20 total), Roll, Clear
 - `components/ResultsPanel.tsx` — per-type values + total, top-left
+- `components/MobileControls.tsx` — the whole mobile control surface (bottom
+  dock: dice-builder toggle + scrollable quick actions + Roll; slide-in sheet:
+  dice +/- and favorites). Reuses the store/localStorage, no new logic
 - `components/scene/` — Scene (Canvas/Physics/lights), Tray, DiceManager, Die
 - `lib/store.ts` — zustand: counts, phase (idle/rolling/settled), rollId,
   spec, results
